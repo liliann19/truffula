@@ -24,5 +24,9 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 - TruffulaOptionsTest- this is the test file that checks if the TruffalaOptions class works correctly. 
 
 ## TruffulaPrinter.java / TruffulaPrinterTest.java
+- TruffulaPrinter- this file prints the directory tree based on the given options that handles colors and sorting files.
+- TruffulaPrinterTest- this is the test file that creates a sample directory and checks if it prints correctly. 
 
 ## AlphabeticalFileSorter.java
+- This file is used to sort files alphabetically by their names and ignores case differences.
+- Lambda is a shorter way of writing a function. 
