@@ -15,8 +15,13 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 - It also can reset the text color to the terminal's default color.
 
 ## ColorPrinter.java / ColorPrinterTest.java
+- ColorPrinter- this file prints the colored text to the console using PrintStream.
+- It also keeps track of the current color to print out the specific colored text if the terminal supports ANSI codes.
+- ColorPrinterTest- this is the test file that checks if ColorPrinter class works correctly.
 
 ## TruffulaOptions.java / TruffulaOptionsTest.java
+- TruffalaOptions- this file contains the logic for the options, like whether to display hidden files, whether to use color, and what root directory path to start from. 
+- TruffulaOptionsTest- this is the test file that checks if the TruffalaOptions class works correctly. 
 
 ## TruffulaPrinter.java / TruffulaPrinterTest.java
 
