@@ -149,4 +149,172 @@ public class TruffulaPrinterTest {
         // Assert that the output matches the expected output exactly
         assertEquals(expected.toString(), output);
     }
+
+    @Test
+    public void testPrintTree_SimpleOutput_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a simple directory structure:
+        // myFolder/
+        //    Documents/
+        //       notes.txt
+
+        // Create "myFolder"
+        File myFolder = new File(tempDir, "myFolder");
+        assertTrue(myFolder.mkdir(), "myFolder should be created");
+
+        // Create subdirectory "Documents" in myFolder
+        File documents = new File(myFolder, "Documents");
+        assertTrue(documents.mkdir(), "Documents directory should be created");
+
+        // Create file in Documents
+        File notes = new File(documents, "notes.txt");
+        notes.createNewFile();
+
+        // Set up TruffulaOptions
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        // Instantiate TruffulaPrinter with custom PrintStream
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        // Build expected output
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("myFolder/").append(nl).append(reset);
+        expected.append(white).append("   Documents/").append(nl).append(reset);
+        expected.append(white).append("      notes.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
+    
+    @Test
+    public void testPrintTree_EmptyDirectory_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a simple directory structure:
+        // emptyFolder/
+
+        File emptyFolder = new File(tempDir, "emptyFolder");
+        assertTrue(emptyFolder.mkdir(), "emptyFolder should be created");
+
+        TruffulaOptions options = new TruffulaOptions(emptyFolder, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("emptyFolder/").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
+
+    @Test
+    public void testPrintTree_DeepNesting_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a directory structure:
+        // root/
+        //    level1/
+        //       level2/
+        //          file.txt
+
+        File root = new File(tempDir, "root");
+        assertTrue(root.mkdir(), "root should be created");
+
+        File level1 = new File(root, "level1");
+        assertTrue(level1.mkdir(), "level1 should be created");
+
+        File level2 = new File(level1, "level2");
+        assertTrue(level2.mkdir(), "level2 should be created");
+
+        File file = new File(level2, "file.txt");
+        file.createNewFile();
+
+        TruffulaOptions options = new TruffulaOptions(root, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("root/").append(nl).append(reset);
+        expected.append(white).append("   level1/").append(nl).append(reset);
+        expected.append(white).append("      level2/").append(nl).append(reset);
+        expected.append(white).append("         file.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
+
+    @Test
+    public void testPrintTree_FileAtRoot_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a simple directory structure:
+        // myFolder/
+        //    file.txt
+
+        File myFolder = new File(tempDir, "myFolder");
+        assertTrue(myFolder.mkdir(), "myFolder should be created");
+
+        File file = new File(myFolder, "file.txt");
+        file.createNewFile();
+
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("myFolder/").append(nl).append(reset);
+        expected.append(white).append("   file.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
 }
