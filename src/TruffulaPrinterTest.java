@@ -317,4 +317,84 @@ public class TruffulaPrinterTest {
         // Assert
         assertEquals(expected.toString(), output);
     }
+
+    @Test
+    public void testPrintTree_OnlyHiddenFileShown_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a simple directory structure:
+        // myFolder/
+        //    .hidden.txt
+
+        File myFolder = new File(tempDir, "myFolder");
+        assertTrue(myFolder.mkdir(), "myFolder should be created");
+
+        createHiddenFile(myFolder, ".hidden.txt");
+
+        TruffulaOptions options = new TruffulaOptions(myFolder, true, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        // Build expected output
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("myFolder/").append(nl).append(reset);
+        expected.append(white).append("   .hidden.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
+
+    @Test
+    public void testPrintTree_HiddenFileNotShown_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a simple directory structure:
+        // myFolder/
+        //    .hidden.txt
+        //    visible.txt
+
+        File myFolder = new File(tempDir, "myFolder");
+        assertTrue(myFolder.mkdir(), "myFolder should be created");
+
+        createHiddenFile(myFolder, ".hidden.txt");
+
+        File visible = new File(myFolder, "visible.txt");
+        visible.createNewFile();
+
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        // Build expected output
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("myFolder/").append(nl).append(reset);
+        expected.append(white).append("   visible.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
 }

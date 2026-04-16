@@ -120,6 +120,8 @@ public class TruffulaPrinter {
   }
 
   private void printTreeHelper(File file, int depth) {
+    if (!options.isShowHidden() && file.isHidden()) return;
+    
     String indent = "";
     for (int i = 0; i < depth; i++) {
       indent += "   ";
