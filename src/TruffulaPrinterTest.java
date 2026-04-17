@@ -170,7 +170,7 @@ public class TruffulaPrinterTest {
         notes.createNewFile();
 
         // Set up TruffulaOptions
-        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -207,7 +207,7 @@ public class TruffulaPrinterTest {
         File emptyFolder = new File(tempDir, "emptyFolder");
         assertTrue(emptyFolder.mkdir(), "emptyFolder should be created");
 
-        TruffulaOptions options = new TruffulaOptions(emptyFolder, false, true);
+        TruffulaOptions options = new TruffulaOptions(emptyFolder, false, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -252,7 +252,7 @@ public class TruffulaPrinterTest {
         File file = new File(level2, "file.txt");
         file.createNewFile();
 
-        TruffulaOptions options = new TruffulaOptions(root, false, true);
+        TruffulaOptions options = new TruffulaOptions(root, false, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -292,7 +292,7 @@ public class TruffulaPrinterTest {
         File file = new File(myFolder, "file.txt");
         file.createNewFile();
 
-        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -329,7 +329,7 @@ public class TruffulaPrinterTest {
 
         createHiddenFile(myFolder, ".hidden.txt");
 
-        TruffulaOptions options = new TruffulaOptions(myFolder, true, true);
+        TruffulaOptions options = new TruffulaOptions(myFolder, true, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -371,7 +371,7 @@ public class TruffulaPrinterTest {
         File visible = new File(myFolder, "visible.txt");
         visible.createNewFile();
 
-        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, false);
 
         // Capture output using a custom PrintStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -393,6 +393,52 @@ public class TruffulaPrinterTest {
         StringBuilder expected = new StringBuilder();
         expected.append(white).append("myFolder/").append(nl).append(reset);
         expected.append(white).append("   visible.txt").append(nl).append(reset);
+
+        // Assert
+        assertEquals(expected.toString(), output);
+    }
+
+    @Test
+    public void testPrintTree_ColorOutput_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
+        // Build a directory structure:
+            // myFolder/
+        //    Documents/
+        //       notes.txt
+
+        File myFolder = new File(tempDir, "myFolder");
+        assertTrue(myFolder.mkdir(), "myFolder should be created");
+
+        File documents = new File(myFolder, "Documents");
+        assertTrue(documents.mkdir(), "Documents directory should be created");
+
+        File notes = new File(documents, "notes.txt");
+        notes.createNewFile();
+
+        TruffulaOptions options = new TruffulaOptions(myFolder, false, true);
+
+        // Capture output using a custom PrintStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, printStream);
+
+        // Call printTree
+        printer.printTree();
+
+        // Retrieve printed output
+        String output = baos.toString();
+        String nl = System.lineSeparator();
+
+        // Build expected output
+        ConsoleColor reset = ConsoleColor.RESET;
+        ConsoleColor white = ConsoleColor.WHITE;
+        ConsoleColor purple = ConsoleColor.PURPLE;
+        ConsoleColor yellow = ConsoleColor.YELLOW;
+
+        StringBuilder expected = new StringBuilder();
+        expected.append(white).append("myFolder/").append(nl).append(reset);
+        expected.append(purple).append("   Documents/").append(nl).append(reset);
+        expected.append(yellow).append("      notes.txt").append(nl).append(reset);
 
         // Assert
         assertEquals(expected.toString(), output);
