@@ -133,13 +133,14 @@ public class TruffulaPrinter {
       out.setCurrentColor(ConsoleColor.WHITE);
     }
 
-
     if (file.isDirectory()) {
       out.println(indent + file.getName() + "/");
 
       File[] children = file.listFiles();
 
       if (children != null) {
+        children = AlphabeticalFileSorter.sort(children);
+        
         for (File child : children) {
           printTreeHelper(child, depth + 1);
         }
